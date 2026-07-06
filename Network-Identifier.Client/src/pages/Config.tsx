@@ -63,7 +63,7 @@ export default function Config() {
               disabled
               className="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 text-gray-500 shadow-sm sm:text-sm p-2 border cursor-not-allowed"
             />
-            <p className="text-xs text-gray-500 mt-1">Currently locked to DnsKeyword</p>
+            <p className="text-xs text-gray-500 mt-1">Currently locked to {criterionType}</p>
           </div>
 
           <div>
