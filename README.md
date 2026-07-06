@@ -11,12 +11,8 @@ This is the frontend client for the Network Identifier application, built with R
 
 **Open your terminal** and navigate to the client directory:
 
-   ```bash
-
    cd Network-Identifier.Client
 
    npm install
 
    npm run dev
-
-   ```
