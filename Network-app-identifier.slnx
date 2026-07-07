@@ -1,1 +1,4 @@
-<Solution />
+<Solution>
+  <Project Path="Network-Identifier.API/Network-Identifier.API.csproj" />
+  <Project Path="Network-Identifier.Core/Network-Identifier.Core.csproj" />
+</Solution>

@@ -1,4 +1,9 @@
 
+using Network_Identifier.Core.Services.Parser;
+using PacketDotNet;
+using SharpPcap;
+using System.Net.NetworkInformation;
+
 namespace Network_Identifier.API
 {
     public class Program
@@ -10,6 +15,8 @@ namespace Network_Identifier.API
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddSingleton<Statistics>();
+            builder.Services.AddHostedService<PacketListenerService>();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
