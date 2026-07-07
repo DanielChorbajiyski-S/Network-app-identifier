@@ -53,7 +53,7 @@ namespace Network_Identifier.API.Controllers
                 return BadRequest(ex.Message);
             }
             
-            return Ok("Added rule successfully.");
+            return Ok(new { message = "Added rule successfully." });
         }
     }
 }

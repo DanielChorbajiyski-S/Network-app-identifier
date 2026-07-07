@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { getAppIcon } from './iconUtils';
 
 interface SignatureRulePayload {
@@ -14,9 +14,11 @@ export default function RuleForm() {
   
   const criterionType = "DnsKeyword";
 
+  const queryClient = useQueryClient();
+
   const configMutation = useMutation({
     mutationFn: async (ruleData: SignatureRulePayload) => {
-      const response = await fetch('/api/config', {
+      const response = await fetch('/api/statistics/rules/addRule', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(ruleData),
@@ -28,6 +30,8 @@ export default function RuleForm() {
     onSuccess: () => {
       setAppName('');
       setValue('');
+
+      queryClient.invalidateQueries({ queryKey: ['signatureRules'] });
     }
   });
 
@@ -89,7 +93,7 @@ export default function RuleForm() {
           {configMutation.isPending ? 'Saving...' : 'Save Signature Rule'}
         </button>
 
-        {configMutation.isError && (
+          {configMutation.isError && (
             <p className="text-red-500 text-sm mt-2 font-medium">Error saving rule.</p>
           )}
           {configMutation.isSuccess && (

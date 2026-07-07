@@ -3,25 +3,16 @@ import { getAppIcon } from './iconUtils';
 
 type RulesData = Record<string, string[]>;
 
-const MOCK_RULES: RulesData = {
-  "Snapchat": ["sc-cdn", "snapchat"],
-  "Instagram": ["cdninstagram", "fbsbx", "fbcdn", "instagram"],
-  "Facebook": ["fbsbx", "fbcdn", "facebook"],
-  "TikTok": ["ibyteimg.com", "ibytedtos.com", "tiktokv.com", "muscdn", "tiktokcdn"],
-  "YouTube": ["googlesyndication", "gstatic", "ytimg", "googlevideo", "youtube"],
-  "LinkedIn": ["licdn", "linkedin"],
-  "Pinterest": ["pinimg", "pinterest"],
-  "Google Maps": ["mobilemaps.googleapis"],
-  "X": ["x.com", "twimg", "twitter"],
-  "Reddit": ["redditmedia", "redd.it", "reddit"],
-};
-
 export default function RulesGrid() {
-  const { data: rules, isLoading } = useQuery<RulesData>({
+  const { data: rules, isLoading, isError } = useQuery<RulesData>({
     queryKey: ['signatureRules'],
     queryFn: async () => {
-      await new Promise(resolve => setTimeout(resolve, 600));
-      return MOCK_RULES;
+      const response = await fetch('/api/statistics/rules'); 
+      
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
     }
   });
 
@@ -30,10 +21,14 @@ export default function RulesGrid() {
       <h2 className="text-black text-2xl font-bold mb-6 border-b pb-4">Active Network Rules</h2>
       
       {isLoading ? (
-        <div className="flex justify-center items-center py-20">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
-        </div>
-      ) : !rules || Object.keys(rules).length === 0 ? (
+          <div className="flex justify-center items-center py-20">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
+          </div>
+        ) : isError ? (
+          <div className="text-center py-20 text-red-500">
+            <p>Failed to load rules. Please check your connection to the server.</p>
+          </div>
+        ) : !rules || Object.keys(rules).length === 0 ? (
         <div className="text-center py-20 text-gray-500">
           <p>No active rules found. Create one to get started.</p>
         </div>
