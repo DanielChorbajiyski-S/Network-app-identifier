@@ -155,7 +155,7 @@ namespace Network_Identifier.Core.Services.Parser
             //    return;
             //}
 
-            var device = devices[5];
+            var device = devices[3];
 
             int totalPackets = 0;
             int tcpPackets = 0;
@@ -357,7 +357,7 @@ namespace Network_Identifier.Core.Services.Parser
             try
             {
                 //await Task.Delay(Timeout.Infinite, stoppingToken);
-                await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+                await Task.Delay(TimeSpan.FromSeconds(60), stoppingToken);
             }
             catch (TaskCanceledException)
             {
