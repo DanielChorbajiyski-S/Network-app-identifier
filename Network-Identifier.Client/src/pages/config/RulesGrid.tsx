@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getAppIcon } from './iconUtils';
+import { getAppIcon } from '../../components/common/iconUtils';
 
 type RulesData = Record<string, string[]>;
 

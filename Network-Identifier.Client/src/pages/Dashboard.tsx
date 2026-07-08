@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { getAppIcon } from '../components/common/iconUtils';
 import { 
   BarChart, 
   Bar, 
@@ -93,15 +94,28 @@ export default function Dashboard() {
                     dataKey="name" 
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fill: '#6B7280', fontSize: 12 }}
-                    dy={10}
+                    interval={0}
+                    tick={(props: any) => {
+                      const { x, y, payload } = props;
+                      return (
+                        <g transform={`translate(${x},${y + 15})`}>
+                          <foreignObject x={-12} y={0} width={24} height={24}>
+                            {/* Render the icon */}
+                            <div className="flex justify-center">
+                              {getAppIcon(payload.value, "w-6 h-6 text-indigo-600")}
+                            </div>
+                          </foreignObject>
+                        </g>
+                      );
+                    }}
+                    dy={20}
                   />
                   <YAxis 
                     axisLine={false}
                     tickLine={false}
                     tick={{ fill: '#6B7280', fontSize: 12 }}
                   />
-                  <Tooltip 
+                  <Tooltip
                     cursor={{ fill: '#F3F4F6' }}
                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
                   />

@@ -357,7 +357,7 @@ namespace Network_Identifier.Core.Services.Parser
             try
             {
                 //await Task.Delay(Timeout.Infinite, stoppingToken);
-                await Task.Delay(TimeSpan.FromSeconds(60), stoppingToken);
+                await Task.Delay(TimeSpan.FromSeconds(360), stoppingToken);
             }
             catch (TaskCanceledException)
             {

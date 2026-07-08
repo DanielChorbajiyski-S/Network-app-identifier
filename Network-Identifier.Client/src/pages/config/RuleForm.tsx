@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAppIcon } from './iconUtils';
+import { getAppIcon } from '../../components/common/iconUtils';
 
 interface SignatureRulePayload {
   appName: string;
