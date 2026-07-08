@@ -44,13 +44,11 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gray-50 p-6 md:p-10">
       <div className="max-w-7xl mx-auto space-y-6">
         
-        {/* Header section */}
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Network Traffic Dashboard</h1>
           <p className="text-gray-500 mt-1">Real-time packet capture statistics</p>
         </div>
 
-        {/* Quick Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
             <h3 className="text-sm font-medium text-gray-500">Total Packets Identified</h3>
@@ -66,7 +64,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Main Chart Widget */}
         <div className="bg-white rounded-xl shadow-md border border-gray-100 p-6 h-125 flex flex-col">
           <h2 className="text-xl font-bold text-gray-900 mb-6">Packet Count by Application</h2>
           
