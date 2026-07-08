@@ -212,10 +212,15 @@ namespace Network_Identifier.Core.Services.Parser
                         ipv4Packets++;
 
                         var srcMatch = CheckIpMatch(ipv4.SourceAddress.ToString());
-                        var dstMatch = CheckIpMatch(ipv4.DestinationAddress.ToString());
+                        var dstMatch = CheckIpMatch(ipv4.DestinationAddress.ToString());  
 
                         if (srcMatch != null) matchedApp = srcMatch;
                         if (dstMatch != null) matchedApp = dstMatch;
+
+                        if (!string.IsNullOrEmpty(matchedApp)){
+                            statistics.IncrementProtocolCount(matchedApp, "IPv4");
+                        }
+                        
 
                         Console.WriteLine(
                             $"IPv4 {ipv4.SourceAddress} -> {ipv4.DestinationAddress}");
@@ -233,6 +238,11 @@ namespace Network_Identifier.Core.Services.Parser
                         if (srcMatch != null) matchedApp = srcMatch;
                         if (dstMatch != null) matchedApp = dstMatch;
 
+                        if (!string.IsNullOrEmpty(matchedApp))
+                        {
+                            statistics.IncrementProtocolCount(matchedApp, "IPv6");
+                        }
+
                         Console.WriteLine(
                             $"IPv6 {ipv6.SourceAddress} -> {ipv6.DestinationAddress}");
                     }
@@ -241,6 +251,11 @@ namespace Network_Identifier.Core.Services.Parser
                     if (tcp != null)
                     {
                         tcpPackets++;
+
+                        if (matchedApp != null)
+                        {
+                            statistics.IncrementProtocolCount(matchedApp, "TCP");
+                        }
 
                         Console.WriteLine(
                             $"TCP       {tcp.SourcePort} -> {tcp.DestinationPort}");
@@ -251,7 +266,7 @@ namespace Network_Identifier.Core.Services.Parser
                     if (udp != null)
                     {
                         udpPackets++;
-
+       
                         if (udp.SourcePort == 53 || udp.DestinationPort == 53)
                         {
                             byte[] data = udp.PayloadData;
@@ -302,19 +317,27 @@ namespace Network_Identifier.Core.Services.Parser
                             Console.WriteLine(
                             $"UDP       {udp.SourcePort} -> {udp.DestinationPort}");
                         }
-                        
+                        if (matchedApp != null)
+                        {
+                            statistics.IncrementProtocolCount(matchedApp, "UDP");
+                        }
+
                     }
                     // ARP
                     var arp = packet.Extract<ArpPacket>();
                     if (arp != null)
                     {
                         arpPackets++;
+                        if (matchedApp != null)
+                        {
+                            statistics.IncrementProtocolCount(matchedApp, "ARP");
+                        }
                         Console.WriteLine("ARP Packet detected");
                     }
 
                     if (!string.IsNullOrEmpty(matchedApp))
                     {
-                        statistics.IncrementCount(matchedApp);
+                        statistics.IncrementPacketCount(matchedApp);
                     }
                     Console.WriteLine();
                 }

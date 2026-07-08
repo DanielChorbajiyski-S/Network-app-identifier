@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using System.Linq;
+using System.Text.Json;
 
 namespace Network_Identifier.Core.Services.Parser
 {
     public class Statistics
     {
+        private const string KeyWordJson = "../Network-Identifier.Core/Data/KeyRules.json";
         public ConcurrentDictionary<string, int> PacketCounts { get; } = new();
 
         public ConcurrentDictionary<string, ConcurrentBag<string>> IpRules { get; } = new()
@@ -27,27 +30,28 @@ namespace Network_Identifier.Core.Services.Parser
             }
         };
 
-        public ConcurrentDictionary<string, ConcurrentBag<string>> KeyWordRules { get; } = new()
-        {
-            ["youtube"] = new ConcurrentBag<string> { "youtube", "googlevideo", "ytimg", "gstatic", "googlesyndication" },
-            ["instagram"] = new ConcurrentBag<string> { "instagram", "fbcdn", "fbsbx", "cdninstagram" },
-            ["google maps"] = new ConcurrentBag<string> { "mobilemaps.googleapis" },
-            ["facebook"] = new ConcurrentBag<string> { "facebook", "fbcdn", "fbsbx" },
-            ["x"] = new ConcurrentBag<string> { "twitter", "twimg", "x.com",},
-            ["tiktok"] = new ConcurrentBag<string> { "tiktokcdn", "muscdn", "tiktokv.com", "ibytedtos.com", "ibyteimg.com" },
-            ["linkedin"] = new ConcurrentBag<string> { "linkedin", "licdn" },
-            ["snapchat"] = new ConcurrentBag<string> { "snapchat", "sc-cdn" },
-            ["pinterest"] = new ConcurrentBag<string> { "pinterest", "pinimg" },
-            ["reddit"] = new ConcurrentBag<string> { "reddit", "redd.it", "redditmedia" }
-        };
+        public ConcurrentDictionary<string, ConcurrentBag<string>> KeyWordRules { get; }
 
-        public void IncrementCount(string company)
+        public ConcurrentDictionary<string, ConcurrentDictionary<string, int>> CompanyProtocolCounts { get; } = new();
+
+        public Statistics()
+        {
+            KeyWordRules = GetKeywordRulesFromJson();
+        }
+
+        public void IncrementPacketCount(string company)
         {
             PacketCounts.AddOrUpdate(
                 company,
                 1,
                 (_, oldValue) => oldValue + 1);
         }
+        public void IncrementProtocolCount(string company, string protocol)
+        {
+            var protocolCounts = CompanyProtocolCounts.GetOrAdd(company, _ => new ConcurrentDictionary<string, int>());
+            protocolCounts.AddOrUpdate(protocol, 1, (_, oldValue) => oldValue + 1);
+        }
+
 
         public void AddIpRule(string company, string ip)
         {
@@ -65,17 +69,18 @@ namespace Network_Identifier.Core.Services.Parser
             bag.Add(ip);
         }
 
-        public void AddDnsRule(string company, string keyword)
+        public async Task AddDnsRule(string company, string keyword)
         {
             var bag = KeyWordRules.GetOrAdd(company, _ => new ConcurrentBag<string>());
 
-            if (bag.Contains(keyword))
+            if (bag.Any(x => x.Equals(keyword, StringComparison.OrdinalIgnoreCase)))
                 throw new ArgumentOutOfRangeException(nameof(keyword), "Rule keyword already exists for this company");
 
             bag.Add(keyword);
+            await AddKeyWordRuleToJson();
         }
 
-        public void AddRule(string company, string type, string keyword)
+        public async Task AddRule(string company, string type, string keyword)
         {
             if (type == "Ip")
             {
@@ -83,14 +88,16 @@ namespace Network_Identifier.Core.Services.Parser
             }
             else if (type == "DnsKeyword")
             {
-                AddDnsRule(company, keyword);
+                await AddDnsRule(company, keyword);
             }
             else
             {
                 throw new ArgumentException("Invalid rule type. Must be 'Ip' or 'DnsKeyword'.", nameof(type));
             }
-            
+
         }
+
+
 
         public Task<Dictionary<string, List<string>>> GetKeywordRules()
         {
@@ -98,11 +105,91 @@ namespace Network_Identifier.Core.Services.Parser
             return Task.FromResult(rules);
         }
 
-        public  Task<Dictionary<string, int>> GetSnapshot()
+        public Task<List<string>> GetKeywordRulesByApp(string app)
+        {
+            if (KeyWordRules.TryGetValue(app, out var keywords))
+            {
+                return Task.FromResult(keywords.ToList());
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException(nameof(app), "No keywords found for the specified app.");
+            }
+        }
+
+        public Task<Dictionary<string, int>> GetPacketCount()
         {
             var snapshot = new Dictionary<string, int>(PacketCounts);
             return Task.FromResult(snapshot);
-            
+
         }
+
+        public Task<int> GetPacketCountByApp(string app)
+        {
+            if (PacketCounts.TryGetValue(app, out var count))
+            {
+                return Task.FromResult(count);
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException(nameof(app), "No packet count found for the specified app.");
+            }
+        }
+
+        public Task<Dictionary<string, Dictionary<string, int>>> GetPacketProtocolCount()
+        {
+            var snapshot = CompanyProtocolCounts.ToDictionary(
+                kvp => kvp.Key,
+                kvp => new Dictionary<string, int>(kvp.Value)
+            );
+            return Task.FromResult(snapshot);
+        }
+
+        public Task<Dictionary<string, int>> GetPacketProtocolCountByApp(string app)
+        {
+            if (CompanyProtocolCounts.TryGetValue(app, out var protocolCounts))
+            {
+                return Task.FromResult(new Dictionary<string, int>(protocolCounts));
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException(nameof(app), "No protocol counts found for the specified app.");
+            }
+        }
+
+
+
+        private static ConcurrentDictionary<string, ConcurrentBag<string>> GetKeywordRulesFromJson()
+        {
+            var json = File.ReadAllText(KeyWordJson);
+            var data = JsonSerializer.Deserialize<Dictionary<string, string[]>>(json);
+
+            if (data == null)
+            {
+                return new ConcurrentDictionary<string, ConcurrentBag<string>>();
+            }
+
+            return new ConcurrentDictionary<string, ConcurrentBag<string>>(
+                data.Select(kvp =>
+                    new KeyValuePair<string, ConcurrentBag<string>>(
+                        kvp.Key,
+                        new ConcurrentBag<string>(kvp.Value)
+                    ))
+            );
+        }
+
+        public async Task AddKeyWordRuleToJson()
+        {
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+
+            string text = JsonSerializer.Serialize(KeyWordRules, options);
+
+            await File.WriteAllTextAsync(KeyWordJson, text);
+
+        }
+ 
     }
 }

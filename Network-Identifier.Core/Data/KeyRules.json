@@ -1,0 +1,52 @@
+{
+  "linkedin": [
+    "licdn",
+    "linkedin"
+  ],
+  "reddit": [
+    "redditmedia",
+    "redd.it",
+    "reddit"
+  ],
+  "x": [
+    "x.com",
+    "twimg",
+    "twitter"
+  ],
+  "google maps": [
+    "mobilemaps.googleapis"
+  ],
+  "instagram": [
+    "cdninstagram",
+    "fbsbx",
+    "fbcdn",
+    "instagram"
+  ],
+  "snapchat": [
+    "sc-cdn",
+    "snapchat"
+  ],
+  "facebook": [
+    "fbsbx",
+    "fbcdn",
+    "facebook"
+  ],
+  "youtube": [
+    "googlesyndication",
+    "gstatic",
+    "ytimg",
+    "googlevideo",
+    "youtube"
+  ],
+  "tiktok": [
+    "ibyteimg.com",
+    "ibytedtos.com",
+    "tiktokv.com",
+    "muscdn",
+    "tiktokcdn"
+  ],
+  "pinterest": [
+    "pinimg",
+    "pinterest"
+  ]
+}
