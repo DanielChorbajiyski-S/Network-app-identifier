@@ -1,43 +1,26 @@
 import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAppIcon } from '../../components/common/iconUtils';
-
-interface SignatureRulePayload {
-  appName: string;
-  criterionType: string;
-  value: string;
-}
+import { getAppIcon } from '../common/iconUtils';
+import { useAddSignatureRule } from '../../hooks/useSignatureRules';
 
 export default function RuleForm() {
   const [appName, setAppName] = useState('');
   const [value, setValue] = useState('');
   
   const criterionType = "DnsKeyword";
-
-  const queryClient = useQueryClient();
-
-  const configMutation = useMutation({
-    mutationFn: async (ruleData: SignatureRulePayload) => {
-      const response = await fetch('/api/statistics/rules/addRule', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(ruleData),
-      });
-      
-      if (!response.ok) throw new Error('Failed to save signature rule');
-      return response.json();
-    },
-    onSuccess: () => {
-      setAppName('');
-      setValue('');
-
-      queryClient.invalidateQueries({ queryKey: ['signatureRules'] });
-    }
-  });
+  const addRuleMutation = useAddSignatureRule();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    configMutation.mutate({ appName, criterionType, value });
+    
+    addRuleMutation.mutate(
+      { appName, criterionType, value },
+      {
+        onSuccess: () => {
+          setAppName('');
+          setValue('');
+        }
+      }
+    );
   };
 
   return (
@@ -87,16 +70,16 @@ export default function RuleForm() {
 
         <button
           type="submit"
-          disabled={configMutation.isPending}
+          disabled={addRuleMutation.isPending}
           className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 mt-6 transition-colors"
         >
-          {configMutation.isPending ? 'Saving...' : 'Save Signature Rule'}
+          {addRuleMutation.isPending ? 'Saving...' : 'Save Signature Rule'}
         </button>
 
-          {configMutation.isError && (
+          {addRuleMutation.isError && (
             <p className="text-red-500 text-sm mt-2 font-medium">Error saving rule.</p>
           )}
-          {configMutation.isSuccess && (
+          {addRuleMutation.isSuccess && (
             <p className="text-green-600 text-sm mt-2 font-medium">Rule saved successfully!</p>
           )}
       </form>

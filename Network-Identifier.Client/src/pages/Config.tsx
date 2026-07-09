@@ -1,5 +1,5 @@
-import RuleForm from './RuleForm';
-import RulesGrid from './RulesGrid';
+import RuleForm from '../components/config/RuleForm';
+import RulesGrid from '../components/config/RulesGrid';
 
 export default function Config() {
   return (

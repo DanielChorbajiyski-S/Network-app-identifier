@@ -1,20 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
-import { getAppIcon } from '../../components/common/iconUtils';
-
-type RulesData = Record<string, string[]>;
+import { getAppIcon } from '../common/iconUtils';
+import { useSignatureRules } from '../../hooks/useSignatureRules';
 
 export default function RulesGrid() {
-  const { data: rules, isLoading, isError } = useQuery<RulesData>({
-    queryKey: ['signatureRules'],
-    queryFn: async () => {
-      const response = await fetch('/api/statistics/rules'); 
-      
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    }
-  });
+  const { data: rules, isLoading, isError } = useSignatureRules();
 
   return (
     <div className="bg-white rounded-xl shadow-md p-8">
