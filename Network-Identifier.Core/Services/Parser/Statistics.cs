@@ -10,7 +10,7 @@ namespace Network_Identifier.Core.Services.Parser
     public class Statistics
     {
         private const string KeyWordJson = "../Network-Identifier.Core/Data/KeyRules.json";
-        public ConcurrentDictionary<string, int> PacketCounts { get; } = new();
+        public ConcurrentDictionary<string, long> PacketCounts { get; } = new();
 
         public ConcurrentDictionary<string, ConcurrentBag<string>> IpRules { get; } = new()
         {
@@ -32,7 +32,7 @@ namespace Network_Identifier.Core.Services.Parser
 
         public ConcurrentDictionary<string, ConcurrentBag<string>> KeyWordRules { get; }
 
-        public ConcurrentDictionary<string, ConcurrentDictionary<string, int>> CompanyProtocolCounts { get; } = new();
+        public ConcurrentDictionary<string, ConcurrentDictionary<string, long>> CompanyProtocolCounts { get; } = new();
 
         public Statistics()
         {
@@ -43,13 +43,13 @@ namespace Network_Identifier.Core.Services.Parser
         {
             PacketCounts.AddOrUpdate(
                 company,
-                1,
+                1L,
                 (_, oldValue) => oldValue + 1);
         }
         public void IncrementProtocolCount(string company, string protocol)
         {
-            var protocolCounts = CompanyProtocolCounts.GetOrAdd(company, _ => new ConcurrentDictionary<string, int>());
-            protocolCounts.AddOrUpdate(protocol, 1, (_, oldValue) => oldValue + 1);
+            var protocolCounts = CompanyProtocolCounts.GetOrAdd(company, _ => new ConcurrentDictionary<string, long>());
+            protocolCounts.AddOrUpdate(protocol, 1L, (_, oldValue) => oldValue + 1);
         }
 
 
@@ -117,14 +117,14 @@ namespace Network_Identifier.Core.Services.Parser
             }
         }
 
-        public Task<Dictionary<string, int>> GetPacketCount()
+        public Task<Dictionary<string, long>> GetPacketCount()
         {
-            var snapshot = new Dictionary<string, int>(PacketCounts);
+            var snapshot = new Dictionary<string, long>(PacketCounts);
             return Task.FromResult(snapshot);
 
         }
 
-        public Task<int> GetPacketCountByApp(string app)
+        public Task<long> GetPacketCountByApp(string app)
         {
             if (PacketCounts.TryGetValue(app, out var count))
             {
@@ -136,20 +136,20 @@ namespace Network_Identifier.Core.Services.Parser
             }
         }
 
-        public Task<Dictionary<string, Dictionary<string, int>>> GetPacketProtocolCount()
+        public Task<Dictionary<string, Dictionary<string, long>>> GetPacketProtocolCount()
         {
             var snapshot = CompanyProtocolCounts.ToDictionary(
                 kvp => kvp.Key,
-                kvp => new Dictionary<string, int>(kvp.Value)
+                kvp => new Dictionary<string, long>(kvp.Value)
             );
             return Task.FromResult(snapshot);
         }
 
-        public Task<Dictionary<string, int>> GetPacketProtocolCountByApp(string app)
+        public Task<Dictionary<string, long>> GetPacketProtocolCountByApp(string app)
         {
             if (CompanyProtocolCounts.TryGetValue(app, out var protocolCounts))
             {
-                return Task.FromResult(new Dictionary<string, int>(protocolCounts));
+                return Task.FromResult(new Dictionary<string, long>(protocolCounts));
             }
             else
             {

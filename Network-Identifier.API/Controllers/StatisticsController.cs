@@ -29,7 +29,7 @@ namespace Network_Identifier.API.Controllers
         [HttpGet("packetCount")]
         public async Task<IActionResult> GetPacketCountStatistics()
         {
-            Dictionary<string, int> statisticsData = await statistics.GetPacketCount();
+            Dictionary<string, long> statisticsData = await statistics.GetPacketCount();
             if (statisticsData == null)
             {
                 return NoContent();
@@ -40,14 +40,14 @@ namespace Network_Identifier.API.Controllers
         [HttpGet("packetCount/{appName}")]
         public async Task<IActionResult> GetPacketCountByApp([FromRoute] string appName)
         {
-            int packetCount = await statistics.GetPacketCountByApp(appName);
+            long packetCount = await statistics.GetPacketCountByApp(appName);
             return Ok(new { AppName = appName, PacketCount = packetCount });
         }
 
         [HttpGet("packetProtocolCount")]
         public async Task<IActionResult> GetPacketProtocolCount()
         {
-            Dictionary<string, Dictionary<string, int>> statisticsData = await statistics.GetPacketProtocolCount();
+            Dictionary<string, Dictionary<string, long>> statisticsData = await statistics.GetPacketProtocolCount();
             if (statisticsData == null)
             {
                 return NoContent();
@@ -58,7 +58,7 @@ namespace Network_Identifier.API.Controllers
         [HttpGet("packetProtocolCount/{appName}")]
         public async Task<IActionResult> GetPacketProtocolCountByApp([FromRoute] string appName)
         {
-            Dictionary<string, int> protocolCounts = await statistics.GetPacketProtocolCountByApp(appName);
+            Dictionary<string, long> protocolCounts = await statistics.GetPacketProtocolCountByApp(appName);
             return Ok(new { AppName = appName, ProtocolCounts = protocolCounts });
         }
 
