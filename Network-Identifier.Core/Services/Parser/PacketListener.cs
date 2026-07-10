@@ -17,11 +17,11 @@ namespace Network_Identifier.Core.Services.Parser
         private readonly IConfiguration configuration;
 
         private long totalPackets = 0;
-        private int tcpPackets = 0;
-        private int udpPackets = 0;
-        private int arpPackets = 0;
-        private int ipv4Packets = 0;
-        private int ipv6Packets = 0;
+        private long tcpPackets = 0;
+        private long udpPackets = 0;
+        private long arpPackets = 0;
+        private long ipv4Packets = 0;
+        private long ipv6Packets = 0;
         public PacketListener(Statistics statistics, IConfiguration configuration)
         {
             this.statistics = statistics;

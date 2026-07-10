@@ -24,7 +24,7 @@ namespace Network_Identifier.Core.Services.Parser
         {
             if (configuration["CaptureSettings:CaptureFileLocation"] != null && configuration["CaptureSettings:CaptureFileLocation"] != "")
             {
-                string relativePath = configuration["CaptureSettings:CaptureFileLocation"];
+                string? relativePath = configuration["CaptureSettings:CaptureFileLocation"];
 
                 filePath = Path.Combine(
                 Directory.GetCurrentDirectory(),
