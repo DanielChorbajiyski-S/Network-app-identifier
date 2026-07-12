@@ -31,7 +31,52 @@ Built with **React 19**, **TypeScript 6**, **Vite 8**, and **Tailwind CSS 4**. K
 
 See `Network-Identifier.Client/README.md` for full details.
 
+### Backend (API & Core)
+Built with ASP.NET Core 9, SharpPcap, and PacketDotNet. Key components:
+
+- **ASP.NET Core Web API** — exposes packet statistics and rule management endpoints
+- **SharpPcap** — live network capture and offline .pcap/.pcapng file analysis
+- **PacketDotNet** — packet parsing and protocol extraction (Ethernet, IPv4/IPv6, TCP, UDP, ARP)
+- **BackgroundService** — continuously captures or analyzes packets in the background
+- **ConcurrentDictionary** — thread-safe storage for packet statistics and application rules
+
+## Prerequisites
+
+- .NET 9 SDK
+- Node.js (v20+ recommended)
+- Npcap (required by SharpPcap for live capture on Windows)
+- A supported network interface with capture permissions
 ## Getting Started
+
+Before starting the backend, configure Network-Identifier.API/appsettings.json.
+
+### Live packet capture
+
+The configured interface name must match an available capture device on the machine. 
+Use a network capture tool or SharpPcap device listing to find the correct interface name.
+Set the preferred network interface and leave the capture file path empty:
+```
+"Capture": {
+  "PreferredInterface": "Microsoft Wi-Fi Direct Virtual Adapter"
+},
+"CaptureSettings": {
+  "CaptureFileLocation": ""
+}
+```
+### Offline capture analysis
+
+Set CaptureFileLocation to the relative path of a .pcap or .pcapng file inside the API project (for example Captures/Capture1.pcapng):
+```
+"Capture": {
+  "PreferredInterface": "Microsoft Wi-Fi Direct Virtual Adapter"
+},
+"CaptureSettings": {
+  "CaptureFileLocation": "Captures/Capture1.pcapng"
+}
+```
+***When CaptureFileLocation is specified, the backend analyzes the capture file instead of starting live packet capture.***
+
+### Commands for starting
 
 ```bash
 # Start the backend (from Network-Identifier.API)
