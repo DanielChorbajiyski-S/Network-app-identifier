@@ -1,50 +1,49 @@
-import { Icon } from '../common/Icon';
+import { Loader } from '../common/Loader';
 import { useSignatureRules } from '../../hooks/useSignatureRules';
+import { RulesGrid_Rule } from './RulesGrid_Rule';
 
 export default function RulesGrid() {
   const { data: rules, isLoading, isError } = useSignatureRules();
 
-  return (
-    <div className="bg-white rounded-xl shadow-md p-8">
-      <h2 className="text-black text-2xl font-bold mb-6 border-b pb-4">Active Network Rules</h2>
-      
-      {isLoading ? (
-          <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
-          </div>
-        ) : isError ? (
-          <div className="text-center py-20 text-red-500">
-            <p>Failed to load rules. Please check your connection to the server.</p>
-          </div>
-        ) : !rules || Object.keys(rules).length === 0 ? (
+  if (isLoading) {
+    return (
+      <div className="bg-white rounded-xl shadow-md p-8">
+        <h2 className="text-black text-2xl font-bold mb-6 border-b pb-4">Active Network Rules</h2>
+        <Loader />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="bg-white rounded-xl shadow-md p-8">
+        <h2 className="text-black text-2xl font-bold mb-6 border-b pb-4">Active Network Rules</h2>
+        <div className="text-center py-20 text-red-500">
+          <p>Failed to load rules. Please check your connection to the server.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!rules || Object.keys(rules).length === 0) {
+    return (
+      <div className="bg-white rounded-xl shadow-md p-8">
+        <h2 className="text-black text-2xl font-bold mb-6 border-b pb-4">Active Network Rules</h2>
         <div className="text-center py-20 text-gray-500">
           <p>No active rules found. Create one to get started.</p>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {Object.entries(rules).map(([app, keywords]) => (
-            <div key={app} className="border border-gray-200 rounded-xl p-5 hover:border-indigo-300 hover:shadow-sm transition-all bg-gray-50/50">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2.5 bg-white rounded-lg shadow-sm border border-gray-100">
-                  {Icon(app, "w-6 h-6 text-indigo-600")}
-                </div>
-                <h3 className="font-bold text-lg text-gray-900">{app}</h3>
-              </div>
-              
-              <div className="flex flex-wrap gap-2">
-                {keywords.map((keyword, index) => (
-                  <span 
-                    key={index} 
-                    className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-100"
-                  >
-                    {keyword}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-xl shadow-md p-8">
+      <h2 className="text-black text-2xl font-bold mb-6 border-b pb-4">Active Network Rules</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {Object.entries(rules).map(([app, keywords]) => (
+          <RulesGrid_Rule key={app} app={app} keywords={keywords} />
+        ))}
+      </div>
     </div>
   );
 }
