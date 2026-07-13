@@ -29,40 +29,6 @@ namespace Network_Identifier.Core.Services.Interfaces
 
         public Task<Dictionary<string, long>> GetPacketProtocolCountByApp(string app);
 
-        private static ConcurrentDictionary<string, ConcurrentBag<string>> GetKeywordRulesFromJson()
-        {
-            if (!File.Exists(KeyWordJson))
-            {
-                throw new FileNotFoundException($"The json file containing the keyword rules could not be found at {KeyWordJson}");
-            }
-            var json = File.ReadAllText(KeyWordJson);
-            var data = JsonSerializer.Deserialize<Dictionary<string, string[]>>(json);
-
-            if (data == null)
-            {
-                return new ConcurrentDictionary<string, ConcurrentBag<string>>();
-            }
-
-            return new ConcurrentDictionary<string, ConcurrentBag<string>>(
-                data.Select(kvp =>
-                    new KeyValuePair<string, ConcurrentBag<string>>(
-                        kvp.Key,
-                        new ConcurrentBag<string>(kvp.Value)
-                    ))
-            );
-        }
-
-        public async Task AddKeyWordRuleToJson()
-        {
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = true
-            };
-
-            string text = JsonSerializer.Serialize(KeyWordRules, options);
-
-            await File.WriteAllTextAsync(KeyWordJson, text);
-
-        }
+        public Task AddKeyWordRuleToJson();
     }
 }
