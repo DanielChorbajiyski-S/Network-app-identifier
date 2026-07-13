@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Network_Identifier.Core.Services.Interfaces;
 using PacketDotNet;
 using SharpPcap;
 using SharpPcap.LibPcap;
@@ -11,7 +12,7 @@ using System.Text;
 namespace Network_Identifier.Core.Services.Parser
 {
 
-    public class PacketListener
+    public class PacketListener : IPacketListener
     {
         private readonly Statistics statistics;
         private readonly IConfiguration configuration;

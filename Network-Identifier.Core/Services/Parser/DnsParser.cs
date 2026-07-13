@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Network_Identifier.Core.Services.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Network_Identifier.Core.Services.Parser
 {
-    public class DnsParser
+    public class DnsParser : IDnsParser
     {
         private readonly Statistics statistics;
         public DnsParser(Statistics statistics)

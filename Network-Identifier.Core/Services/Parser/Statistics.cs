@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Network_Identifier.Core.Services.Interfaces;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
@@ -7,7 +8,7 @@ using System.Text.Json;
 
 namespace Network_Identifier.Core.Services.Parser
 {
-    public class Statistics
+    public class Statistics : IStatistics
     {
         private const string KeyWordJson = "../Network-Identifier.Core/Data/KeyRules.json";
         public ConcurrentDictionary<string, long> PacketCounts { get; } = new();

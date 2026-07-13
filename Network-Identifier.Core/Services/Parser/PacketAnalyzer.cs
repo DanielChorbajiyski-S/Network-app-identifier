@@ -1,4 +1,5 @@
-﻿using PacketDotNet;
+﻿using Network_Identifier.Core.Services.Interfaces;
+using PacketDotNet;
 using SharpPcap;
 using SharpPcap.LibPcap;
 using System;
@@ -7,7 +8,7 @@ using System.Text;
 
 namespace Network_Identifier.Core.Services.Parser
 {
-    public class PacketAnalyzer
+    public class PacketAnalyzer : IPacketAnalyzer
     {
         private long totalPackets = 0;
         private long tcpPackets = 0;
