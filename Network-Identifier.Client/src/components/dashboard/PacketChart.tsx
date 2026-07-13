@@ -8,7 +8,7 @@ import {
   ResponsiveContainer
 } from 'recharts';
 
-import { getAppIcon } from '../common/iconUtils';
+import { Icon } from '../common/Icon';
 import { StackedTooltip } from './StackedTooltip';
 import { usePacketStatistics } from '../../hooks/usePacketStatistics';
 import { PROTOCOL_COLORS } from '../../constants/theme';
@@ -51,7 +51,7 @@ export default function PacketChart() {
                     <g transform={`translate(${x},${y + 15})`}>
                       <foreignObject x={-12} y={0} width={24} height={24}>
                         <div className="flex justify-center">
-                          {getAppIcon(payload.value, "w-6 h-6 text-indigo-600")}
+                          {Icon(payload.value, "w-6 h-6 text-indigo-600")}
                         </div>
                       </foreignObject>
                     </g>

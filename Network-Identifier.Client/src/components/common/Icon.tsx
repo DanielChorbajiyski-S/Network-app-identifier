@@ -11,7 +11,7 @@ const iconRegistry: Record<string, React.ElementType> = {
   FaGoogle, FaFirefoxBrowser, FaCircleQuestion
 };
 
-export const getAppIcon = (appName: string, classNameOverride?: string) => {
+export const Icon = (appName: string, classNameOverride?: string) => {
   const iconProps = { className: classNameOverride || "w-5 h-5 flex-shrink-0 text-gray-700" };
   
   const matchedKey = Object.keys(appIcons).find(

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getAppIcon } from '../common/iconUtils';
+import { Icon } from '../common/Icon';
 import { useAddSignatureRule } from '../../hooks/useSignatureRules';
 
 export default function RuleForm() {
@@ -40,7 +40,7 @@ export default function RuleForm() {
               required
             />
             <div className="p-2.5 bg-white rounded-lg shadow-sm border border-gray-100">
-              {getAppIcon(appName, "w-6 h-6 text-indigo-600")}
+              {Icon(appName, "w-6 h-6 text-indigo-600")}
             </div>
           </div>
         </div>
