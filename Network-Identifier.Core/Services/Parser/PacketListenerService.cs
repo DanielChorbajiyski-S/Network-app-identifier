@@ -9,20 +9,21 @@ namespace Network_Identifier.Core.Services.Parser
     public class PacketListenerService : BackgroundService
     {
         private readonly PacketListener _listener;
+        private readonly PacketAnalyzer _analyzer;
         private readonly IConfiguration configuration;
         private string? filePath;
 
 
-        public PacketListenerService(Statistics statistics, IConfiguration configuration)
+        public PacketListenerService (PacketListener packetListener, IConfiguration configuration, PacketAnalyzer packetAnalyzer)
         {
             this.configuration = configuration;
-            _listener = new PacketListener(statistics, configuration);
-            
+            _listener = packetListener;
+            _analyzer = packetAnalyzer;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            if (configuration["CaptureSettings:CaptureFileLocation"] != null && configuration["CaptureSettings:CaptureFileLocation"] != "")
+            if (!string.IsNullOrWhiteSpace(configuration["CaptureSettings:CaptureFileLocation"]))
             {
                 string? relativePath = configuration["CaptureSettings:CaptureFileLocation"];
 
@@ -30,7 +31,15 @@ namespace Network_Identifier.Core.Services.Parser
                 Directory.GetCurrentDirectory(),
                 relativePath!)!.ToString();
 
-                _listener.AnalyzePacketFromFile(filePath);
+                if (File.Exists(filePath))
+                {
+                    _analyzer.AnalyzePacketFromFile(filePath);
+                }
+                else
+                {
+                    throw new FileNotFoundException($"The specified capture file '{filePath}' does not exist.");
+                }
+                
             }
             else
             {

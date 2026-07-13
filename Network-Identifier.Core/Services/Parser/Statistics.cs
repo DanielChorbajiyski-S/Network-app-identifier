@@ -12,22 +12,14 @@ namespace Network_Identifier.Core.Services.Parser
         private const string KeyWordJson = "../Network-Identifier.Core/Data/KeyRules.json";
         public ConcurrentDictionary<string, long> PacketCounts { get; } = new();
 
-        public ConcurrentDictionary<string, ConcurrentBag<string>> IpRules { get; } = new()
+        public ConcurrentDictionary<string, string> IpRules { get; } = new()
         {
-            ["youtube"] = new ConcurrentBag<string> { "216.239.32.223" },
-
-            ["instagram"] = new ConcurrentBag<string>
-            {
-                "157.240.234.18",
-                "157.240.234.19",
-                "157.240.234.63",
-                "157.240.234.142"
-            },
-
-            ["google maps"] = new ConcurrentBag<string>
-            {
-                "216.239.38.135"
-            }
+            ["216.239.32.223"] = "youtube",
+            ["157.240.234.18"] = "instagram",
+            ["157.240.234.19"] = "instagram",
+            ["157.240.234.63"] = "instagram",
+            ["157.240.234.142"] = "instagram",
+            ["216.239.38.135"] = "google maps"
         };
 
         public ConcurrentDictionary<string, ConcurrentBag<string>> KeyWordRules { get; }
@@ -55,18 +47,17 @@ namespace Network_Identifier.Core.Services.Parser
 
         public void AddIpRule(string company, string ip)
         {
-            foreach (var kvp in IpRules)
+            if (IpRules.ContainsKey(ip) && IpRules[ip] == company)
             {
-                if (kvp.Value.Any(x => x == ip))
-                    throw new ArgumentOutOfRangeException(nameof(ip), "Rule IP already exists for another company");
+                throw new ArgumentOutOfRangeException(nameof(ip), "Rule IP already added for this company");
+            }
+            else if (IpRules.ContainsKey(ip) && IpRules[ip] != company)
+            {
+                throw new ArgumentOutOfRangeException(nameof(ip), "Rule IP already exists for another company");
             }
 
-            var bag = IpRules.GetOrAdd(company, _ => new ConcurrentBag<string>());
 
-            if (bag.Contains(ip))
-                throw new ArgumentOutOfRangeException(nameof(ip), "Rule IP already exists for this company");
-
-            bag.Add(ip);
+            var bag = IpRules.GetOrAdd(ip, company);
         }
 
         public async Task AddDnsRule(string company, string keyword)
@@ -161,6 +152,10 @@ namespace Network_Identifier.Core.Services.Parser
 
         private static ConcurrentDictionary<string, ConcurrentBag<string>> GetKeywordRulesFromJson()
         {
+            if (!File.Exists(KeyWordJson))
+            {
+                throw new FileNotFoundException($"The json file containing the keyword rules could not be found at {KeyWordJson}");
+            }
             var json = File.ReadAllText(KeyWordJson);
             var data = JsonSerializer.Deserialize<Dictionary<string, string[]>>(json);
 

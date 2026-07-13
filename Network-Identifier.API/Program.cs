@@ -16,7 +16,12 @@ namespace Network_Identifier.API
 
             builder.Services.AddControllers();
             builder.Services.AddSingleton<Statistics>();
+            builder.Services.AddSingleton<DnsParser>();
+            builder.Services.AddSingleton<PacketAnalyzer>();
+            builder.Services.AddSingleton<PacketListener>();
             builder.Services.AddHostedService<PacketListenerService>();
+
+
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
