@@ -42,7 +42,7 @@ Built with ASP.NET Core 9, SharpPcap, and PacketDotNet. Key components:
 
 ## Prerequisites
 
-- .NET 9 SDK
+- .NET 10 SDK
 - Node.js (v20+ recommended)
 - Npcap (required by SharpPcap for live capture on Windows)
 - A supported network interface with capture permissions
@@ -80,7 +80,12 @@ Set CaptureFileLocation to the relative path of a .pcap or .pcapng file inside t
 
 ```bash
 # Start the backend (from Network-Identifier.API)
+cd Network-Identifier.API
 dotnet run
+
+# Start the backend (from Network-Identifier.API) for Linux
+cd Network-Identifier.API
+sudo dotnet run
 
 # Start the frontend (from Network-Identifier.Client)
 cd Network-Identifier.Client
