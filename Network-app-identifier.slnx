@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="Network-Identifier.API/Network-Identifier.API.csproj" />
   <Project Path="Network-Identifier.Core/Network-Identifier.Core.csproj" />
+  <Project Path="Network-Identifier.Tests/Network-Identifier.Tests.csproj" Id="6ce56682-508a-4ed2-a9c4-e8bf34deba61" />
 </Solution>
