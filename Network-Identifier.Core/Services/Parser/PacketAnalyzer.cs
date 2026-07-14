@@ -1,5 +1,6 @@
 ﻿using Network_Identifier.Core.Services.Interfaces;
 using PacketDotNet;
+using PacketDotNet.Ieee80211;
 using SharpPcap;
 using SharpPcap.LibPcap;
 using System;
@@ -50,12 +51,27 @@ namespace Network_Identifier.Core.Services.Parser
                     $"[{DateTime.Now:HH:mm:ss}] Packet #{totalPackets}");
 
                 var ethernet = packet.Extract<EthernetPacket>();
+                var linuxSll = null as LinuxSllPacket;
 
-                if (ethernet == null)
-                    return;
+                if (ethernet != null){
+                    Console.WriteLine($"Ethernet  {ethernet.SourceHardwareAddress} -> {ethernet.DestinationHardwareAddress}");
+                }
+                else
+                {
+                    linuxSll = packet.Extract<LinuxSllPacket>();
 
-                Console.WriteLine(
-                        $"Ethernet  {ethernet.SourceHardwareAddress} -> {ethernet.DestinationHardwareAddress}");
+                    if(linuxSll != null)
+                    {
+                        Console.WriteLine("Linux Cooked Capture (SLL)");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Unknown link layer type");
+                        return;
+                    }
+                }
+
+                
 
 
                 var ipv4 = packet.Extract<IPv4Packet>();
